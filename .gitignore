@@ -1,0 +1,7 @@
+venv*
+*.pyc
+.idea
+*.class
+.DS_Store
+*.iml
+java/target/
