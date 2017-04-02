@@ -35,11 +35,22 @@ class Game(object):
     def is_ended(self):
         return self.row.get_pins_left() == 0
 
-    def get_winner(self):
+    @property
+    def winner(self):
         if self.is_ended():
             return self.turn
         else:
             return None
+
+    @property
+    def loser(self):
+        if not self.is_ended():
+            return None
+
+        if self.turn == self.player1:
+            return self.player2
+        else:
+            return player1
 
     def __str__(self):
         return self.row.__str__()
@@ -121,7 +132,7 @@ class Tournament(object):
             raise exceptions.InvalidPlayer('cannot remove winner')
         elif self.players[player] == False:
             raise exceptions.InvalidPlayer('player already removed')
-            
+
         self.players[player] = False
 
     def get_players(self, active):

@@ -87,17 +87,29 @@ class GameTest(unittest.TestCase):
         with mock.patch.object(Row, 'get_pins_left', return_value=1):
             self.assertFalse(game.is_ended())
 
-    def test_get_winner_none(self):
+    def test_winner_none(self):
         game = Game(self.p1, self.p2)
 
         with mock.patch.object(Game, 'is_ended', return_value=False):
-            self.assertIsNone(game.get_winner())
+            self.assertIsNone(game.winner)
 
-    def test_get_winner_true(self):
+    def test_winner_set(self):
         game = Game(self.p1, self.p2)
 
         with mock.patch.object(Game, 'is_ended', return_value=True):
-            self.assertEqual(game.get_winner(), game.turn)
+            self.assertEqual(game.winner, game.turn)
+
+    def test_loser_none(self):
+        game = Game(self.p1, self.p2)
+
+        with mock.patch.object(Game, 'is_ended', return_value=False):
+            self.assertIsNone(game.loser)
+
+    def test_loser_set(self):
+        game = Game(self.p1, self.p2)
+
+        with mock.patch.object(Game, 'is_ended', return_value=True):
+            self.assertNotEqual(game.loser, game.turn)
 
     def test_str(self):
         game = Game(self.p1, self.p2)

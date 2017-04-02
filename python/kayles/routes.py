@@ -33,19 +33,34 @@ def new_game():
     player1 = args.get('player1')
     player2 = args.get('player2')
 
-    # validate
-    if not player1 or not player2:
-        data = {
-            'message': 'ERROR: need both player1 and player2'
-        }
-        return make_response(jsonify(data), 400)
-
+    validate_players(player1, player2)
     game = Game(player1, player2)
+
     data = {
         'message': 'new game started',
     }
     logger.info('started new game player1:%s player2:%s', game.player1, game.player2)
     return make_response(jsonify(data), 201)
+
+
+def validate_players(player1, player2):
+    """
+    validates the players
+    """
+    if not player1 or not player2:
+        raise exceptions.InvalidPlayer('need both player1 and player2')
+
+    # determine if the players are active if there's a tournament
+    if tournament:
+        active_players = tournament.get_players(True)
+
+        if tournament.winner:
+            raise exceptions.InvalidPlayer('tournament is finished')
+
+        if player1 not in active_players:
+            raise exceptions.InvalidPlayer('player1 is invalid in the tournament')
+        if player2 not in active_players:
+            raise exceptions.InvalidPlayer('player2 is invalid in the tournament')
 
 
 @routes.route('/move/<player>/<int:pin1>', methods=['POST'], defaults={'pin2': None})
@@ -58,8 +73,12 @@ def move(player, pin1, pin2):
         return make_response(jsonify(data), 400)
 
     game.move(player, pin1, pin2)
+
     if game.is_ended():
-        message = '{} is the winner!'.format(game.get_winner())
+        message = '{} is the winner!'.format(game.winner)
+
+        if tournament:
+            tournament.remove_player(game.loser)
     else:
         message = game.__str__()
 
