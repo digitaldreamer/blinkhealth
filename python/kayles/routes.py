@@ -7,10 +7,8 @@ from flask import (
     jsonify,
     request,
 )
-from kayles import exceptions
+from kayles import exceptions, models
 from kayles.models import (
-    game,
-    tournament,
     Game,
     Tournament,
 )
@@ -26,20 +24,20 @@ def all_exception_handler(error):
     }
     return make_response(jsonify(data), 400)
 
+
 @routes.route('/game', methods=['POST'])
 def new_game():
-    global game
-    args = request.json or {}
+    args = request.get_json(force=True) or {}
     player1 = args.get('player1')
     player2 = args.get('player2')
 
     validate_players(player1, player2)
-    game = Game(player1, player2)
+    models.game = Game(player1, player2)
 
     data = {
         'message': 'new game started',
     }
-    logger.info('started new game player1:%s player2:%s', game.player1, game.player2)
+    logger.info('started new game player1:%s player2:%s', models.game.player1, models.game.player2)
     return make_response(jsonify(data), 201)
 
 
@@ -51,10 +49,10 @@ def validate_players(player1, player2):
         raise exceptions.InvalidPlayer('need both player1 and player2')
 
     # determine if the players are active if there's a tournament
-    if tournament:
-        active_players = tournament.get_players(True)
+    if models.tournament:
+        active_players = models.tournament.get_players(True)
 
-        if tournament.winner:
+        if models.tournament.winner:
             raise exceptions.InvalidPlayer('tournament is finished')
 
         if player1 not in active_players:
@@ -70,14 +68,24 @@ def validate_players(player1, player2):
 @routes.route('/move/<player>/<int:pin1>', methods=['POST'], defaults={'pin2': None})
 @routes.route('/move/<player>/<int:pin1>,<int:pin2>', methods=['POST'])
 def move(player, pin1, pin2):
-    if not game or game.is_ended():
+    if not models.game or models.game.is_ended():
         data = {
             'message': 'No active game. POST /game to start a new game.'
         }
         return make_response(jsonify(data), 400)
 
-    game.move(player, pin1, pin2)
+    models.game.move(player, pin1, pin2)
 
+    data = {
+        'message': get_move_message(models.game, models.tournament),
+    }
+    return make_response(jsonify(data), 201)
+
+
+def get_move_message(game, tournament):
+    """
+    return the move mesage
+    """
     if game.is_ended():
         logger.info('player:%s is the winner', game.winner)
         message = '{} is the winner!'.format(game.winner)
@@ -88,25 +96,22 @@ def move(player, pin1, pin2):
     else:
         message = game.__str__()
 
-    data = {
-        'message': message,
-    }
-    return make_response(jsonify(data), 201)
+    return message
 
 
 @routes.route('/tournament', methods=['GET'])
 def get_tournament():
-    if tournament == None:
+    if models.tournament == None:
         data = {
             'message': 'no active tournament',
         }
         return make_response(jsonify(data), 404)
 
-    data = tournament_data()
+    data = tournament_data(models.tournament)
     return make_response(jsonify(data), 200)
 
 
-def tournament_data():
+def tournament_data(tournament):
     data = {
         'players': {
             'active': tournament.get_players(True),
@@ -122,8 +127,7 @@ def tournament_data():
 
 @routes.route('/tournament', methods=['POST'])
 def new_tournament():
-    global tournament
-    args = request.json or {}
+    args = request.get_json(force=True) or {}
     players = args.get('players', [])
 
     # validate
@@ -133,23 +137,23 @@ def new_tournament():
         }
         return make_response(jsonify(data), 400)
 
-    tournament = Tournament(players=players)
+    models.tournament = Tournament(players=players)
     logger.info('started new tournament with %s players', len(players))
 
-    data = tournament_data()
+    data = tournament_data(models.tournament)
     return make_response(jsonify(data), 201)
 
 
 @routes.route('/tournament/players/<player>', methods=['DELETE'])
 def remove_player(player):
-    if tournament == None:
+    if models.tournament == None:
         data = {
             'message': 'no active tournament',
         }
         return make_response(jsonify(data), 400)
 
-    tournament.remove_player(player)
+    models.tournament.remove_player(player)
     logger.info('player:%s removed from tournament', player)
 
-    data = tournament_data()
+    data = tournament_data(models.tournament)
     return make_response(jsonify(data), 201)

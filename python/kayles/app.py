@@ -1,5 +1,5 @@
 # logging - need to set first
-import config
+from kayles import config
 import logging
 formatter = '%(asctime)s - %(levelname)s - %(name)s - %(message)s'
 logging.basicConfig(format=formatter, level=logging.getLevelName(config.LOGLEVEL))
