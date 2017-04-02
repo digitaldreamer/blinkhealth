@@ -1,7 +1,4 @@
-class GameException(Exception): pass
-class InvalidMoveException(GameException): pass
-class InvalidTurnException(GameException): pass
-
+from kayles import exceptions
 
 game = None
 tournament = None
@@ -21,7 +18,7 @@ class Game(object):
 
     def move(self, player, pin1, pin2=None):
         if player != self.turn:
-            raise InvalidTurnException()
+            raise exceptions.InvalidTurnException()
 
         self.row.knockdown(pin1, pin2)
         self.update_turn()
@@ -58,20 +55,84 @@ class Row(object):
     def knockdown(self, index1, index2=None):
         try:
             if not self.pins[index1]:
-                raise InvalidMoveException()
+                raise exceptions.InvalidMoveException()
 
             self.pins[index1] = False
 
             if index2:
                 if abs(index1 - index2) != 1:
-                    raise InvalidMoveException()
+                    raise exceptions.InvalidMoveException()
 
                 if not self.pins[index2]:
-                    raise InvalidMoveException()
+                    raise exceptions.InvalidMoveException()
 
                 self.pins[index2] = False
         except IndexError:
-            raise InvalidMoveException()
+            raise exceptions.InvalidMoveException()
 
     def get_pins_left(self):
         return self.pins.count(True)
+
+
+class Tournament(object):
+    players = None
+
+    def __init__(self, players=None):
+        self.players = {}
+        players = players or []
+
+        for player in players:
+            self.add_player(player)
+
+    @property
+    def players_left(self):
+        """
+        return the count of how many players are left
+        """
+        return len(self.get_players(True))
+
+    @property
+    def winner(self):
+        """
+        returns the winner or none
+        """
+        if self.players_left != 1:
+            return None
+
+        return self.get_players(True)[0]
+
+    def add_player(self, player):
+        """
+        add a new player to the tournament
+        """
+        if player in self.players.keys():
+            raise exceptions.DuplicatePlayer()
+
+        self.players[player] = True
+
+    def remove_player(self, player):
+        """
+        remove a player from the tournament: marks them as inactive
+        """
+        if player not in self.players.keys():
+            raise exceptions.PlayerNotFound()
+
+        if self.players[player]:
+            self.players[player] = False
+        else:
+            raise exceptions.InvalidPlayer('player already removed')
+
+    def get_players(self, active):
+        """
+        returns the list of players
+
+        # Params
+
+        * active:none|bool - filters the players on their status
+        """
+        if active == None:
+            players = [k for k, v in self.players.items()]
+        else:
+            players = [k for k, v in self.players.items() if v == active]
+
+        return players

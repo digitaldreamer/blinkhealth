@@ -2,12 +2,11 @@ import unittest
 from unittest import mock
 
 from kayles.models import (
-    GameException,
-    InvalidTurnException,
-    InvalidMoveException,
     Game,
     Row,
+    Tournament,
 )
+from kayles import exceptions
 
 
 class GameTest(unittest.TestCase):
@@ -24,7 +23,7 @@ class GameTest(unittest.TestCase):
     def test_move_fail(self):
         game = Game(self.p1, self.p2)
 
-        with self.assertRaises(InvalidTurnException) as context:
+        with self.assertRaises(exceptions.InvalidTurnException) as context:
             game.move(self.p2, 0)
 
     def test_move_success(self):
@@ -104,6 +103,7 @@ class GameTest(unittest.TestCase):
         game = Game(self.p1, self.p2)
         game.row = [True, False, True]
         self.assertEqual(game.__str__(), game.row.__str__())
+
 
 class RowTest(unittest.TestCase):
     def test_init(self):
@@ -214,7 +214,7 @@ class RowTest(unittest.TestCase):
                 row = Row(len(test['pins']))
                 row.pins = test['pins']
 
-                with self.assertRaises(InvalidMoveException) as context:
+                with self.assertRaises(exceptions.InvalidMoveException) as context:
                     row.knockdown(test['pin1'], test['pin2'])
 
     def test_knockdown_success(self):
@@ -269,3 +269,165 @@ class RowTest(unittest.TestCase):
 
         row.pins = [True, False, True]
         self.assertEqual(row.__str__(), '!x!')
+
+
+class TournamentTest(unittest.TestCase):
+    def test_init(self):
+        tests = [
+            {
+                'name': 'players-none',
+                'players': None,
+                'expected': {},
+            },
+            {
+                'name': 'players-set',
+                'players': ['p1', 'p2'],
+                'expected': {
+                    'p1': True,
+                    'p2': True,
+                },
+            },
+        ]
+
+        for test in tests:
+            with self.subTest(name=test['name']):
+                tournament = Tournament(players=test['players'])
+                self.assertEqual(tournament.players, test['expected'])
+
+    def test_winner(self):
+        tests = [
+            {
+                'name': 'players-empty',
+                'players': {},
+                'expected': None,
+            },
+            {
+                'name': 'players-set',
+                'players': {'p1': True, 'p2': True},
+                'expected': None,
+            },
+            {
+                'name': 'players-mixed',
+                'players': {'p1': False, 'p2': True, 'p3': True},
+                'expected': None,
+            },
+            {
+                'name': 'players-winner',
+                'players': {'p1': False, 'p2': False, 'p3': True},
+                'expected': 'p3',
+            },
+        ]
+
+        for test in tests:
+            with self.subTest(name=test['name']):
+                tournament = Tournament()
+                tournament.players = test['players']
+                self.assertEqual(tournament.winner, test['expected'])
+
+    def test_players_left(self):
+        tests = [
+            {
+                'name': 'players-empty',
+                'players': {},
+                'expected': 0,
+            },
+            {
+                'name': 'players-set',
+                'players': {'p1': True, 'p2': True},
+                'expected': 2,
+            },
+            {
+                'name': 'players-mixed',
+                'players': {'p1': False, 'p2': True},
+                'expected': 1,
+            },
+            {
+                'name': 'players-false',
+                'players': {'p1': False, 'p2': False},
+                'expected': 0,
+            },
+        ]
+
+        for test in tests:
+            with self.subTest(name=test['name']):
+                tournament = Tournament()
+                tournament.players = test['players']
+                self.assertEqual(tournament.players_left, test['expected'])
+
+    def test_get_players(self):
+        tests = [
+            {
+                'name': 'players-empty',
+                'players': {},
+                'active': None,
+                'expected': [],
+            },
+            {
+                'name': 'players-all',
+                'players': {'p1': True, 'p2': False, 'p3': False},
+                'active': None,
+                'expected': ['p1', 'p2', 'p3'],
+            },
+            {
+                'name': 'players-active',
+                'players': {'p1': True, 'p2': False, 'p3': True},
+                'active': True,
+                'expected': ['p1', 'p3'],
+            },
+            {
+                'name': 'players-removed',
+                'players': {'p1': True, 'p2': False, 'p3': True},
+                'active': False,
+                'expected': ['p2'],
+            },
+        ]
+
+        for test in tests:
+            with self.subTest(name=test['name']):
+                tournament = Tournament()
+                tournament.players = test['players']
+                players = tournament.get_players(test['active'])
+
+                self.assertEqual(len(players), len(test['expected']))
+                for p in players:
+                    self.assertIn(p, test['expected'])
+
+    def test_add_player_success(self):
+        tournament = Tournament()
+        tournament.add_player('p1')
+        self.assertEqual(tournament.players, {'p1': True})
+
+        tournament.add_player('p2')
+        self.assertEqual(tournament.players, {'p1': True, 'p2': True})
+
+    def test_add_player_duplicate(self):
+        tournament = Tournament()
+        tournament.add_player('p1')
+        self.assertEqual(tournament.players, {'p1': True})
+
+        with self.assertRaises(exceptions.DuplicatePlayer) as context:
+            tournament.add_player('p1')
+            self.assertEqual(tournament.players, {'p1': True})
+
+    def test_remove_player_success(self):
+        tournament = Tournament(players=['p1', 'p2', 'p3'])
+        tournament.remove_player('p2')
+        self.assertEqual(tournament.players, {'p1': True, 'p2': False, 'p3': True})
+
+        tournament.remove_player('p3')
+        self.assertEqual(tournament.players, {'p1': True, 'p2': False, 'p3': False})
+
+    def test_remove_player_notfound(self):
+        tournament = Tournament(players=['p1', 'p2', 'p3'])
+
+        with self.assertRaises(exceptions.PlayerNotFound) as context:
+            tournament.remove_player('p4')
+            self.assertEqual(tournament.players, {'p1': True, 'p2': True, 'p3': True})
+
+    def test_remove_player_invalid(self):
+        tournament = Tournament(players=['p1', 'p2', 'p3'])
+        tournament.remove_player('p2')
+
+        with self.assertRaises(exceptions.InvalidPlayer) as context:
+            tournament.remove_player('p2')
+            self.assertEqual(tournament.players, {'p1': True, 'p2': False, 'p3': True})

@@ -7,20 +7,22 @@ from flask import (
     jsonify,
     request,
 )
+from kayles import exceptions
 from kayles.models import (
     game,
+    tournament,
     Game,
-    GameException,
+    Tournament,
 )
 
 logger = logging.getLogger(__name__)
 routes = Blueprint('game', __name__)
 
 
-@routes.errorhandler(GameException)
+@routes.errorhandler(exceptions.GameException)
 def all_exception_handler(error):
     data = {
-        'message': error.__class__.__name__
+        'message': '{}: {}'.format(error.__class__.__name__, str(error))
     }
     return make_response(jsonify(data), 400)
 
