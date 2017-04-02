@@ -6,10 +6,6 @@ Blinkayles is a REST implementation of Kayles, the simple two-player math game. 
 
 This variation uses misère rules: the last player to knock down a pin wins.
 
-### POST `/game`
+### API Documentation
 
-Begin a new game
-
-### POST `/move/<player>/<pin>[,<pin>]`
-
-Knock down one or two pins
+https://documenter.getpostman.com/view/9825/blinkhealth/6YvVbhF
