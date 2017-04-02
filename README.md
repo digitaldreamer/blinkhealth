@@ -6,6 +6,47 @@ Blinkayles is a REST implementation of Kayles, the simple two-player math game. 
 
 This variation uses misère rules: the last player to knock down a pin wins.
 
+
+# Install
+
+I implemented the python version using python3.
+
+It is built as a pip-installable package and `kayles` is required to be in the python path.
+
+Run the following commands to initialize the virtualenv and install dependencies
+
+```
+virtualenv -p python3 env
+source env/bin/activate
+pip install -r requirements.txt
+python3 setup.py develop
+```
+
+# Run
+
+```
+python3 kayles/app.py
+```
+
+# Simulate Game (deprecated)
+
+NOTE: changes were made to the endpoints play.sh calls
+You can simulate playing a game with `play.sh`:
+
+```
+play.sh
+```
+
+# Make commands
+
+To get the list of make targets run:
+
+```
+make help
+```
+
 ### API Documentation
+
+I used postman to interact with all routes and to provide documentation
 
 https://documenter.getpostman.com/view/9825/blinkhealth/6YvVbhF
