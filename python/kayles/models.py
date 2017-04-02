@@ -117,10 +117,12 @@ class Tournament(object):
         if player not in self.players.keys():
             raise exceptions.PlayerNotFound()
 
-        if self.players[player]:
-            self.players[player] = False
-        else:
+        if self.winner:
+            raise exceptions.InvalidPlayer('cannot remove winner')
+        elif self.players[player] == False:
             raise exceptions.InvalidPlayer('player already removed')
+            
+        self.players[player] = False
 
     def get_players(self, active):
         """

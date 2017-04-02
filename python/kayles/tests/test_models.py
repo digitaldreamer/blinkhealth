@@ -417,6 +417,15 @@ class TournamentTest(unittest.TestCase):
         tournament.remove_player('p3')
         self.assertEqual(tournament.players, {'p1': True, 'p2': False, 'p3': False})
 
+    def test_remove_player_winner(self):
+        tournament = Tournament(players=['p1', 'p2', 'p3'])
+        tournament.remove_player('p1')
+        tournament.remove_player('p2')
+
+        with self.assertRaises(exceptions.InvalidPlayer) as context:
+            tournament.remove_player('p3')
+            self.assertEqual(tournament.players, {'p1': False, 'p2': False, 'p3': True})
+
     def test_remove_player_notfound(self):
         tournament = Tournament(players=['p1', 'p2', 'p3'])
 

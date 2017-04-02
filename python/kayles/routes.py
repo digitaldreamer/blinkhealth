@@ -42,8 +42,7 @@ def new_game():
 
     game = Game(player1, player2)
     data = {
-        'player1': game.player1,
-        'player2': game.player2,
+        'message': 'new game started',
     }
     logger.info('started new game player1:%s player2:%s', game.player1, game.player2)
     return make_response(jsonify(data), 201)
@@ -67,4 +66,65 @@ def move(player, pin1, pin2):
     data = {
         'message': message,
     }
+    return make_response(jsonify(data), 201)
+
+
+@routes.route('/tournament', methods=['GET'])
+def get_tournament():
+    if tournament == None:
+        data = {
+            'message': 'no active tournament',
+        }
+        return make_response(jsonify(data), 404)
+
+    data = tournament_data()
+    return make_response(jsonify(data), 200)
+
+
+def tournament_data():
+    data = {
+        'players': {
+            'active': tournament.get_players(True),
+            'removed': tournament.get_players(False),
+        }
+    }
+
+    if tournament.winner:
+        data['winner'] = tournament.winner
+
+    return data
+
+
+@routes.route('/tournament', methods=['POST'])
+def new_tournament():
+    global tournament
+    args = request.json or {}
+    players = args.get('players', [])
+
+    # validate
+    if not len(players) > 2:
+        data = {
+            'message': 'ERROR: need at least 3 players to start a tournament'
+        }
+        return make_response(jsonify(data), 400)
+
+    tournament = Tournament(players=players)
+    logger.info('started new tournament with %s players', len(players))
+
+    data = tournament_data()
+    return make_response(jsonify(data), 201)
+
+
+@routes.route('/tournament/players/<player>', methods=['DELETE'])
+def remove_player(player):
+    if tournament == None:
+        data = {
+            'message': 'no active tournament',
+        }
+        return make_response(jsonify(data), 400)
+
+    tournament.remove_player(player)
+    logger.info('player:%s removed from tournament', player)
+
+    data = tournament_data()
     return make_response(jsonify(data), 201)
