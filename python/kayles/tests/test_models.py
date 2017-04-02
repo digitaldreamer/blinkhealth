@@ -105,11 +105,19 @@ class GameTest(unittest.TestCase):
         with mock.patch.object(Game, 'is_ended', return_value=False):
             self.assertIsNone(game.loser)
 
-    def test_loser_set(self):
+    def test_loser_p2(self):
         game = Game(self.p1, self.p2)
+        game.turn = self.p1
 
         with mock.patch.object(Game, 'is_ended', return_value=True):
-            self.assertNotEqual(game.loser, game.turn)
+            self.assertEqual(game.loser, self.p2)
+
+    def test_loser_p1(self):
+        game = Game(self.p1, self.p2)
+        game.turn = self.p2
+
+        with mock.patch.object(Game, 'is_ended', return_value=True):
+            self.assertEqual(game.loser, self.p1)
 
     def test_str(self):
         game = Game(self.p1, self.p2)

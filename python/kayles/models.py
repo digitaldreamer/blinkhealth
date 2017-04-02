@@ -50,7 +50,7 @@ class Game(object):
         if self.turn == self.player1:
             return self.player2
         else:
-            return player1
+            return self.player1
 
     def __str__(self):
         return self.row.__str__()

@@ -62,6 +62,10 @@ def validate_players(player1, player2):
         if player2 not in active_players:
             raise exceptions.InvalidPlayer('player2 is invalid in the tournament')
 
+        logger.debug('participants pass and tournament detected')
+    else:
+        logger.debug('participants pass not in tournament')
+
 
 @routes.route('/move/<player>/<int:pin1>', methods=['POST'], defaults={'pin2': None})
 @routes.route('/move/<player>/<int:pin1>,<int:pin2>', methods=['POST'])
@@ -75,10 +79,12 @@ def move(player, pin1, pin2):
     game.move(player, pin1, pin2)
 
     if game.is_ended():
+        logger.info('player:%s is the winner', game.winner)
         message = '{} is the winner!'.format(game.winner)
 
         if tournament:
             tournament.remove_player(game.loser)
+            logger.info('player:%s is removed from the tournament', game.loser)
     else:
         message = game.__str__()
 
