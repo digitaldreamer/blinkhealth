@@ -72,10 +72,11 @@ To get the list of make targets run:
 
 ```
 make help
-run - run the local app server
-test - run the tests
-install - installs the dependencies and app (source the virtualenv first)
-clean - removes all generated files
+
+> run - run the local app server
+> test - run the tests
+> install - installs the dependencies and app (source the virtualenv first)
+> clean - removes all generated files
 ```
 
 # API Documentation
