@@ -54,7 +54,7 @@ python3 setup.py develop
 python3 kayles/app.py
 ```
 
-# Simulate Game (deprecated)
+## Simulate Game (deprecated)
 
 NOTE: changes were made to the endpoints play.sh calls
 You can simulate playing a game with `play.sh`:
@@ -73,7 +73,7 @@ To get the list of make targets run:
 make help
 ```
 
-### API Documentation
+# API Documentation
 
 I used postman to interact with all routes and to provide documentation
 
