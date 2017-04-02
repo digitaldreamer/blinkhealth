@@ -42,10 +42,11 @@ It is built as a pip-installable package and `kayles` is required to be in the p
 Run the following commands to initialize the virtualenv and install dependencies
 
 ```
-cd python
 virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
+
+cd python
 python3 setup.py develop
 ```
 
