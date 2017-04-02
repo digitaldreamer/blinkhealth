@@ -42,6 +42,7 @@ It is built as a pip-installable package and `kayles` is required to be in the p
 Run the following commands to initialize the virtualenv and install dependencies
 
 ```
+cd python
 virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
@@ -71,6 +72,7 @@ There is a makefile to help automate running, testing, and cleanup
 To get the list of make targets run:
 
 ```
+cd python
 make help
 
 > run - run the local app server
