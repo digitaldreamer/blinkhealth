@@ -20,6 +20,19 @@ You'll need to extend the REST interface with endpoints to begin a new tournamen
 
 The existing code is not perfect and you should feel free to change it as you see fit, however there are no serious bugs in the code.
 
+# Release Notes
+
+## 0.1.0 - tournament support
+
+* I left the original functionality mostly in tact with the an API change to `POST /game` that accepts player values.
+* you can still only play one game
+* you can only have one open tournament
+* new games that are added while a tournament is active will check against the tournament player list for valid players
+* games finished while a tournament is active will automatically update the tournament list removing the loser from the active list
+* when there is only one active player left in a tournament they will be marked as the winner and the tournament must be reset
+* test coverage is over 95%
+* added postman collection and documentation
+
 # Install
 
 I implemented the python version using python3.
