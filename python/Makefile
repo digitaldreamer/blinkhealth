@@ -15,7 +15,7 @@ clean:
 	find . | grep -E "(__pycache__|\.pyc$$)" | xargs rm -rf
 	python3 setup.py develop --uninstall
 	rm -rf *.egg-info
-	rm -rf env/
+	rm -rf ../env/
 
 help:
 	@echo "run - run the local app server"
