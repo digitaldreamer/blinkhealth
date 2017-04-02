@@ -52,6 +52,8 @@ play.sh
 
 # Make commands
 
+There is a makefile to help automate running, testing, and cleanup
+
 To get the list of make targets run:
 
 ```
@@ -63,3 +65,5 @@ make help
 I used postman to interact with all routes and to provide documentation
 
 https://documenter.getpostman.com/view/9825/blinkhealth/6YvVbhF
+
+You can load the collection from the postman file `postman/blinkhealth.json`.
