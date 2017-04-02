@@ -1,22 +1,23 @@
-class GameException(Exception):
-    pass
+class GameException(Exception): pass
+class InvalidMoveException(GameException): pass
+class InvalidTurnException(GameException): pass
 
 
-class InvalidMoveException(GameException):
-    pass
-
-
-class InvalidTurnException(GameException):
-    pass
+game = None
+tournament = None
 
 
 class Game(object):
-    PLAYER1, PLAYER2 = 'player1', 'player2'
     PINS = 10
+    player1 = ''
+    player2 = ''
 
-    def __init__(self):
+    def __init__(self, player1, player2):
+        self.player1 = player1
+        self.player2 = player2
+
         self.row = Row(self.PINS)
-        self.turn = self.PLAYER1
+        self.turn = self.player1
 
     def move(self, player, pin1, pin2=None):
         if player != self.turn:
@@ -29,10 +30,10 @@ class Game(object):
         if self.is_ended():
             return
 
-        if self.turn == self.PLAYER1:
-            self.turn = self.PLAYER2
+        if self.turn == self.player1:
+            self.turn = self.player2
         else:
-            self.turn = self.PLAYER1
+            self.turn = self.player1
 
     def is_ended(self):
         return self.row.get_pins_left() == 0

@@ -12,7 +12,7 @@ do_post () {
 	echo ""
 }
 
-PORT="4567"
+PORT="8000"
 
 PLAYER1="player1"
 PLAYER2="player2"

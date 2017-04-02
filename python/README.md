@@ -1,18 +1,36 @@
 # Python Blinkayles
 
-To run the app, first install pip dependencies:
+This requires python3
+
+# Install
+
+Initialize a virtualenv and install dependencies
 
 ```
-$ pip install -r requirements.txt
+virtualenv -p python3 env
+source env/bin/activate
+pip install -r requirements.txt
+python3 setup.py develop
 ```
 
-then start the server:
+# Run
 
 ```
-$ python app.py
+python3 kayles/app.py
 ```
+
+# Simulate Game
 
 You can simulate playing a game with `play.sh`:
+
 ```
-$ ../play.sh
+play.sh
+```
+
+# Make commands
+
+To get the list of make targets run:
+
+```
+make help
 ```
