@@ -56,7 +56,8 @@ python3 kayles/app.py
 
 ## Simulate Game (deprecated)
 
-NOTE: changes were made to the endpoints play.sh calls
+NOTE: changes were made to the endpoints so play won't work until it's updated
+
 You can simulate playing a game with `play.sh`:
 
 ```
