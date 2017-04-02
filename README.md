@@ -6,6 +6,19 @@ Blinkayles is a REST implementation of Kayles, the simple two-player math game. 
 
 This variation uses misère rules: the last player to knock down a pin wins.
 
+## Your Mission
+
+Your project is to extend Blinkayles with a tournament layer that can narrow a pool of N players down to 1 winner.
+
+### Requirements:
+
+* Single elimination - after each game, the winner remains in the tournament and the loser doesn’t play any more games
+* Supports an arbitrary number of tournament participants, including odd numbers.
+* Concurrent tournaments/games is not a requirement. It’s up to you if you’d like to support concurrent games and tournaments. You won’t be penalized for a solution that only supports one game/tournament at a time.
+
+You'll need to extend the REST interface with endpoints to begin a new tournament and interact with that tournament. You don't need to preserve the existing single-game functionality.
+
+The existing code is not perfect and you should feel free to change it as you see fit, however there are no serious bugs in the code.
 
 # Install
 
