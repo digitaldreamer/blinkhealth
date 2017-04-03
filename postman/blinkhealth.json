@@ -3,7 +3,7 @@
   "info": {
     "name": "blinkhealth",
     "_postman_id": "d7c46f04-45a9-9d81-8551-45c2f0c5184c",
-    "description": "",
+    "description": "Blinkayles API",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
