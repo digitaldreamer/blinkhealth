@@ -133,7 +133,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"players\": [\"p1\", \"p2\", \"p3\"]\n}"
+          "raw": "{\n\t\"players\": [\"p1\", \"p2\", \"p3\"]\n}"
         },
         "description": "Create a new tournament. This will overwrite an existing tournament.\n\nOnly one tournament can be running at one time."
       },
