@@ -133,7 +133,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"players\": [\"p1\", \"p2\", \"p3\"]\n}"
+          "raw": "{\n  \"players\": [\"p1\", \"p2\", \"p3\"]\n}"
         },
         "description": "Create a new tournament. This will overwrite an existing tournament.\n\nOnly one tournament can be running at one time."
       },
@@ -166,7 +166,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"players\": [\"p1\", \"p2\", \"p3\", \"p4\"]\n}"
+          "raw": "{\n  \"players\": [\"p1\", \"p2\", \"p3\", \"p4\"]\n}"
         },
         "description": "Get a tournament active and remove player lists and the winner if applicable."
       },
