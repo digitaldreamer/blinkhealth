@@ -34,7 +34,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n\t\"player1\": \"{{player1}}\",\n\t\"player2\": \"{{player2}}\"\n}"
+          "raw": "{\n  \"player1\": \"{{player1}}\",\n  \"player2\": \"{{player2}}\"\n}"
         },
         "description": "Crete a new game, will overwrite an existing game.\n\nIt will check the users against an active tournament if applicable.\n\nOnly one game can be running at a time."
       },
